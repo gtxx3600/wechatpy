@@ -81,13 +81,13 @@ class WeChatWxa(BaseWeChatAPI):
         )
         return self._post("cgi-bin/message/wxopen/template/send", data=tpl_data)
 
-    def send_subscribe_message(self, user_id, template_id, data, page=None):
+    def send_subscribe_message(self, user_id, template_id, data, page=None, miniprogram_state=None, lang=None):
         """
         发送订阅消息
         详情请参考
         https://developers.weixin.qq.com/miniprogram/dev/api-backend/open-api/subscribe-message/subscribeMessage.send.html
         """
-        subs_data = optionaldict(touser=user_id, template_id=template_id, page=page, data=data,)
+        subs_data = optionaldict(touser=user_id, template_id=template_id, page=page, data=data, miniprogram_state=miniprogram_state, lang=lang)
         return self._post("cgi-bin/message/subscribe/send", data=subs_data)
 
     def modify_domain(

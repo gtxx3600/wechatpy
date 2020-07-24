@@ -445,3 +445,100 @@ class WeChatWxa(BaseWeChatAPI):
             },
             result_processor=lambda x: x["unionid"],
         )
+
+    def add_subscribe_template(self, tid, kid_list, scene_desc=''):
+        """
+        组合模板并添加至帐号下的个人模板库
+        
+        :param tid: 模板标题 id，可通过接口获取，也可登录小程序后台查看获取
+        :param kid_list: 开发者自行组合好的模板关键词列表，关键词顺序可以自由搭配（例如 [3,5,4] 或 [4,5,3]），最多支持5个，最少2个关键词组合
+        :param scene_desc: 服务场景描述，15个字以内
+
+        详情参考
+        https://developers.weixin.qq.com/miniprogram/dev/api-backend/open-api/subscribe-message/subscribeMessage.addTemplate.html
+        """
+        return self._post(
+            'wxaapi/newtmpl/addtemplate',
+            data={
+                'tid': tid,
+                'kidList': kid_list,
+                'sceneDesc': scene_desc,
+            },
+            result_processor=lambda x: x['priTmplId'],
+        )
+
+    def delete_subscribe_template(self, template_id):
+        """
+        删除帐号下的个人模板
+        
+        :param template_id: 要删除的模板id
+
+        详情参考
+        https://developers.weixin.qq.com/miniprogram/dev/api-backend/open-api/subscribe-message/subscribeMessage.deleteTemplate.html
+        """
+        return self._post(
+            'wxaapi/newtmpl/deltemplate',
+            data={
+                'priTmplId': template_id,
+            },
+        )
+
+    def get_subscribe_category(self):
+        """
+        获取小程序账号的类目 (订阅消息模块提供)
+
+        详情参考
+        https://developers.weixin.qq.com/miniprogram/dev/api-backend/open-api/subscribe-message/subscribeMessage.getCategory.html
+        """
+        return self._get(
+            'wxaapi/newtmpl/getcategory',
+            result_processor=lambda x: x['data'],
+        )
+        
+    def get_subscribe_template_keywords(self, tid):
+        """
+        获取模板标题下的关键词列表
+
+        :param template_id: 模板标题 id，可通过接口获取
+
+        详情参考
+        https://developers.weixin.qq.com/miniprogram/dev/api-backend/open-api/subscribe-message/subscribeMessage.getPubTemplateKeyWordsById.html
+        """
+        return self._get(
+            'wxaapi/newtmpl/getpubtemplatekeywords',
+            params={
+                "tid": tid
+            }
+        )
+
+    def get_subscribe_template_title_list(self, ids, start, limit):
+        """
+        获取帐号所属类目下的公共模板标题
+
+        :param ids: 类目 id，列表
+        :param start: 用于分页，表示从 start 开始。从 0 开始计数。
+        :param limit: 用于分页，表示拉取 limit 条记录。最大为 30。
+
+        详情参考
+        https://developers.weixin.qq.com/miniprogram/dev/api-backend/open-api/subscribe-message/subscribeMessage.getPubTemplateTitleList.html
+        """
+        return self._get(
+            'wxaapi/newtmpl/getpubtemplatetitles',
+            params={
+                "ids": ','.join(ids),
+                "start": start,
+                "limit": limit,
+            }
+        )
+
+    def get_subscribe_private_template_list(self):
+        """
+        获取当前帐号下的个人模板列表
+
+        详情参考
+        https://developers.weixin.qq.com/miniprogram/dev/api-backend/open-api/subscribe-message/subscribeMessage.getTemplateList.html
+        """
+        return self._get(
+            'wxaapi/newtmpl/gettemplate',
+            result_processor=lambda x: x['data'],
+        )
